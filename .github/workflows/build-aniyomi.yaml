@@ -1,0 +1,80 @@
+name: Build Android APK
+run-name: Build Job
+
+on:
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: "Git repository URL"
+        required: true
+        default: "https://github.com/aniyomiorg/aniyomi"
+      jdkVersion:
+        description: "OpenJDK version to use: 8 / 11 / 17 etc."
+        required: false
+        default: "17"
+      taskName:
+        description: "build.gradle task name: assemble[Flavor]Debug"
+        required: false
+        default: "assembleStandardPreview"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Android SDK is built-in in this image
+    steps:
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: ${{ github.event.inputs.jdkVersion }}
+
+      - name: Clone project
+        run: git clone ${{ github.event.inputs.repository }} workspace
+
+      - name: Build APK
+        working-directory: ./workspace
+        run: |
+          if [ ! -f "gradlew" ]; then gradle wrapper; fi
+          chmod +x gradlew
+          ./gradlew ${{ github.event.inputs.taskName }} --stacktrace
+
+      - name: Count commits
+        run: |
+          set -e
+          cd workspace
+          commit_count=$(git rev-list --count HEAD)
+          echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
+
+      - name: Upload APK 1
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-universal-preview.apk
+          name: app-standard-universal-${{ env.COMMIT_COUNT }}.apk
+          retention-days: 3
+
+      - name: Upload APK 2
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-arm64-v8a-preview.apk
+          name: app-standard-arm64-v8a-r${{ env.COMMIT_COUNT }}.apk
+          retention-days: 3
+
+      - name: Upload APK 3
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-armeabi-v7a-preview.apk
+          name: app-standard-armeabi-v7a-r${{ env.COMMIT_COUNT }}.apk
+          retention-days: 3
+
+      - name: Upload APK 4
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-x86-preview.apk
+          name: app-standard-x86-r${{ env.COMMIT_COUNT }}.apk
+          retention-days: 3
+
+      - name: Upload APK 5
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-x86_64-preview.apk
+          name: app-standard-x86_64-r${{ env.COMMIT_COUNT }}.apk
+          retention-days: 3
