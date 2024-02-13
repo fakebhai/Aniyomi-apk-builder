@@ -8,14 +8,19 @@ on:
         description: "Git repository URL"
         required: true
         default: "https://github.com/aniyomiorg/aniyomi"
+      imageLink:
+        description: "The link of the image to use as the app icon"
+        required: false
+      appName:
+        description: "New app name"
+        required: false
+      applicationId:
+        description: "New application ID"
+        required: false
       jdkVersion:
         description: "OpenJDK version to use: 8 / 11 / 17 etc."
         required: false
         default: "17"
-      taskName:
-        description: "build.gradle task name: assemble[Flavor]Debug"
-        required: false
-        default: "assembleStandardPreview"
 
 jobs:
   build:
@@ -30,12 +35,61 @@ jobs:
       - name: Clone project
         run: git clone ${{ github.event.inputs.repository }} workspace
 
+      - name: Install ImageMagick
+        run: sudo apt-get install imagemagick
+
+      - name: Generate and Replace App Icons
+        run: |
+          set -e
+          cd workspace
+          if [ -n "${{ github.event.inputs.imageLink }}" ]; then
+            wget -O icon.png ${{ github.event.inputs.imageLink }}
+            rm app/src/main/res/mipmap-hdpi/ic_launcher.png
+            rm app/src/main/res/mipmap-hdpi/ic_launcher_round.png
+            rm app/src/main/res/mipmap-mdpi/ic_launcher.png
+            rm app/src/main/res/mipmap-mdpi/ic_launcher_round.png
+            rm app/src/main/res/mipmap-xhdpi/ic_launcher.png
+            rm app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
+            rm app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+            rm app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
+            rm app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+            rm app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+            rm app/src/main/ic_launcher-web.png
+            convert icon.png -resize 72x72 app/src/main/res/mipmap-hdpi/ic_launcher.png
+            convert icon.png -resize 72x72 app/src/main/res/mipmap-hdpi/ic_launcher_round.png
+            convert icon.png -resize 48x48 app/src/main/res/mipmap-mdpi/ic_launcher.png
+            convert icon.png -resize 48x48 app/src/main/res/mipmap-mdpi/ic_launcher_round.png
+            convert icon.png -resize 96x96 app/src/main/res/mipmap-xhdpi/ic_launcher.png
+            convert icon.png -resize 96x96 app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
+            convert icon.png -resize 144x144 app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+            convert icon.png -resize 144x144 app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
+            convert icon.png -resize 192x192 app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+            convert icon.png -resize 192x192 app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+            convert icon.png -resize 400x400 app/src/main/ic_launcher-web.png
+          fi
+
+      - name: Change App Name
+        run: |
+          set -e
+          cd workspace
+          if [ -n "${{ github.event.inputs.appName }}" ]; then
+            sed -i 's|<string name="app_name" translatable="false">.*</string>|<string name="app_name" translatable="false">${{ github.event.inputs.appName }}</string>|' i18n/src/commonMain/resources/MR/base/strings.xml
+          fi
+
+      - name: Change Application ID
+        run: |
+          set -e
+          cd workspace
+          if [ -n "${{ github.event.inputs.applicationId }}" ]; then
+            sed -i 's|applicationId = ".*"|applicationId = "${{ github.event.inputs.applicationId }}"|' app/build.gradle.kts
+          fi
+
       - name: Build APK
         working-directory: ./workspace
         run: |
           if [ ! -f "gradlew" ]; then gradle wrapper; fi
           chmod +x gradlew
-          ./gradlew ${{ github.event.inputs.taskName }} --stacktrace
+          ./gradlew assembleStandardRelease --stacktrace
 
       - name: Count commits
         run: |
@@ -47,34 +101,34 @@ jobs:
       - name: Upload APK 1
         uses: actions/upload-artifact@v3
         with:
-          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-universal-preview.apk
+          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-universal-release-unsigned.apk
           name: app-standard-universal-${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
 
       - name: Upload APK 2
         uses: actions/upload-artifact@v3
         with:
-          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-arm64-v8a-preview.apk
+          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-arm64-v8a-release-unsigned.apk
           name: app-standard-arm64-v8a-r${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
 
       - name: Upload APK 3
         uses: actions/upload-artifact@v3
         with:
-          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-armeabi-v7a-preview.apk
+          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-armeabi-v7a-release-unsigned.apk
           name: app-standard-armeabi-v7a-r${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
 
       - name: Upload APK 4
         uses: actions/upload-artifact@v3
         with:
-          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-x86-preview.apk
+          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-x86-release-unsigned.apk
           name: app-standard-x86-r${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
 
       - name: Upload APK 5
         uses: actions/upload-artifact@v3
         with:
-          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-x86_64-preview.apk
+          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-x86_64-release-unsigned.apk
           name: app-standard-x86_64-r${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
