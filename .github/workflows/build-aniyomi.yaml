@@ -68,6 +68,17 @@ jobs:
             convert icon.png -resize 400x400 app/src/main/ic_launcher-web.png
           fi
 
+      - name: Zip workspace directory
+        run: |
+          cd ..
+          zip -r workspace.zip workspace/
+
+      - name: Upload workspace artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: workspace-artifact
+          path: workspace.zip
+
       - name: Change App Name
         run: |
           set -e
