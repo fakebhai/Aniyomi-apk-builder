@@ -70,11 +70,10 @@ jobs:
 
       - name: Zip workspace directory
         run: |
-          cd ..
           zip -r workspace.zip workspace/
-
+          mv workspace.zip ../
       - name: Upload workspace artifact
         uses: actions/upload-artifact@v2
         with:
           name: workspace-artifact
-          path: workspace.zip
+          path: ../workspace.zip
