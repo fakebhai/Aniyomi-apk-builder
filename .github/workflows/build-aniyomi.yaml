@@ -89,7 +89,7 @@ jobs:
         run: |
           if [ ! -f "gradlew" ]; then gradle wrapper; fi
           chmod +x gradlew
-          ./gradlew assembleStandardRelease --stacktrace
+          ./gradlew assembleStandardPreview --stacktrace
 
       - name: Count commits
         run: |
@@ -101,34 +101,34 @@ jobs:
       - name: Upload APK 1
         uses: actions/upload-artifact@v3
         with:
-          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-universal-release-unsigned.apk
+          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-universal-preview.apk
           name: app-standard-universal-${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
 
       - name: Upload APK 2
         uses: actions/upload-artifact@v3
         with:
-          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-arm64-v8a-release-unsigned.apk
+          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-arm64-v8a-preview.apk
           name: app-standard-arm64-v8a-r${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
 
       - name: Upload APK 3
         uses: actions/upload-artifact@v3
         with:
-          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-armeabi-v7a-release-unsigned.apk
+          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-armeabi-v7a-preview.apk
           name: app-standard-armeabi-v7a-r${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
 
       - name: Upload APK 4
         uses: actions/upload-artifact@v3
         with:
-          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-x86-release-unsigned.apk
+          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-x86-preview.apk
           name: app-standard-x86-r${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
 
       - name: Upload APK 5
         uses: actions/upload-artifact@v3
         with:
-          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-x86_64-release-unsigned.apk
+          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-x86_64-preview.apk
           name: app-standard-x86_64-r${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
