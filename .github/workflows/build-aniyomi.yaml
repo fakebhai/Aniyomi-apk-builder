@@ -8,6 +8,10 @@ on:
         description: "Git repository URL"
         required: true
         default: "https://github.com/aniyomiorg/aniyomi"
+      branch:
+        description: "Branch name"
+        required: false
+        default: "master"
       imageLink:
         description: "The link of the image to use as the app icon"
         required: false
@@ -33,7 +37,7 @@ jobs:
           java-version: ${{ github.event.inputs.jdkVersion }}
 
       - name: Clone project
-        run: git clone ${{ github.event.inputs.repository }} workspace
+        run: git clone -b ${{ github.event.inputs.branch }} ${{ github.event.inputs.repository }} workspace
 
       - name: Install ImageMagick
         run: sudo apt-get install imagemagick
