@@ -59,6 +59,7 @@ jobs:
             rm app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
             rm app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
             rm app/src/main/ic_launcher-web.png
+            rm -r app/src/main/res/mipmap-anydpi-v26
             convert icon.png -resize 72x72 app/src/main/res/mipmap-hdpi/ic_launcher.png
             convert icon.png -resize 72x72 app/src/main/res/mipmap-hdpi/ic_launcher_round.png
             convert icon.png -resize 48x48 app/src/main/res/mipmap-mdpi/ic_launcher.png
