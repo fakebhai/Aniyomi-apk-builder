@@ -38,6 +38,13 @@ jobs:
       - name: Install ImageMagick
         run: sudo apt-get install imagemagick
 
+      - name: Modify build.gradle.kts
+        run: |
+          sed -i '/named("debug") {/i \
+          getByName("release") { \n\
+              signingConfig = signingConfigs.getByName("debug") \n\
+          }' app/build.gradle.kts
+
       - name: Generate and Replace App Icons
         run: |
           set -e
