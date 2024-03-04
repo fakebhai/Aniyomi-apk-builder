@@ -43,9 +43,9 @@ jobs:
           set -e
           cd workspace
           sed -i '/named("debug") {/i \
-                  getByName("release") {
-                      signingConfig = signingConfigs.getByName("debug")
-                  }' app/build.gradle.kts
+          getByName("release") {\
+              signingConfig = signingConfigs.getByName("debug")\
+          }' app/build.gradle.kts
 
       - name: Generate and Replace App Icons
         run: |
