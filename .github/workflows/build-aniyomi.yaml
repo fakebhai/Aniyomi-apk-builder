@@ -103,7 +103,7 @@ jobs:
         run: |
           if [ ! -f "gradlew" ]; then gradle wrapper; fi
           chmod +x gradlew
-          ./gradlew assembleStandardPreview --stacktrace
+          ./gradlew assembleStandardRelease --stacktrace
 
       - name: Count commits
         run: |
