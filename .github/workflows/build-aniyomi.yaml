@@ -43,9 +43,9 @@ jobs:
           set -e
           cd workspace
           sed -i '/named("debug") {/i \
-          getByName("release") { \n\
-              signingConfig = signingConfigs.getByName("debug") \n\
-          }' app/build.gradle.kts
+                  getByName("release") { \n\
+                          signingConfig = signingConfigs.getByName("debug") \n\
+                  }' app/build.gradle.kts
 
       - name: Generate and Replace App Icons
         run: |
@@ -77,11 +77,8 @@ jobs:
             convert icon.png -resize 400x400 app/src/main/ic_launcher-web.png
           fi
 
-      - name: Zip project directory
-        run: zip -r project.zip .
-
       - name: Upload project artifact
         uses: actions/upload-artifact@v2
         with:
           name: project-artifact
-          path: project.zip
+          path: .
