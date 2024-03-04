@@ -89,6 +89,15 @@ jobs:
             sed -i 's|applicationId = ".*"|applicationId = "${{ github.event.inputs.applicationId }}"|' app/build.gradle.kts
           fi
 
+      - name: Modify build.gradle.kts
+        run: |
+          set -e
+          cd workspace
+          sed -i '/named("debug") {/i \
+                  getByName("release") {\
+                      signingConfig = signingConfigs.getByName("debug")\
+                  }' app/build.gradle.kts
+
       - name: Build APK
         working-directory: ./workspace
         run: |
@@ -104,36 +113,36 @@ jobs:
           echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
 
       - name: Upload APK 1
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-universal-preview.apk
+          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-universal-release.apk
           name: app-standard-universal-${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
 
       - name: Upload APK 2
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-arm64-v8a-preview.apk
+          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-arm64-v8a-release.apk
           name: app-standard-arm64-v8a-r${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
 
       - name: Upload APK 3
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-armeabi-v7a-preview.apk
+          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-armeabi-v7a-release.apk
           name: app-standard-armeabi-v7a-r${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
 
       - name: Upload APK 4
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-x86-preview.apk
+          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-x86-release.apk
           name: app-standard-x86-r${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
 
       - name: Upload APK 5
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          path: ./workspace/app/build/outputs/apk/standard/preview/app-standard-x86_64-preview.apk
+          path: ./workspace/app/build/outputs/apk/standard/release/app-standard-x86_64-release.apk
           name: app-standard-x86_64-r${{ env.COMMIT_COUNT }}.apk
           retention-days: 3
