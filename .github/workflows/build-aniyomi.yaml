@@ -40,6 +40,8 @@ jobs:
 
       - name: Modify build.gradle.kts
         run: |
+          set -e
+          cd workspace
           sed -i '/named("debug") {/i \
           getByName("release") { \n\
               signingConfig = signingConfigs.getByName("debug") \n\
