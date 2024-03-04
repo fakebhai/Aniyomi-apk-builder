@@ -78,7 +78,7 @@ jobs:
           fi
 
       - name: Upload project artifact
-        uses: actions/upload-artifact@latest
+        uses: actions/upload-artifact@v4
         with:
           name: project-artifact
           path: .
