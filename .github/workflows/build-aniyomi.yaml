@@ -13,7 +13,7 @@ on:
         required: false
         default: "master"
       imageLink:
-        description: "The link of the image to use as the app icon"
+        description: "(release only) The link of the image to use as the app icon"
         required: false
       appName:
         description: "New app name"
@@ -78,7 +78,7 @@ jobs:
           set -e
           cd workspace
           if [ -n "${{ github.event.inputs.appName }}" ]; then
-            sed -i 's|<string name="app_name" translatable="false">.*</string>|<string name="app_name" translatable="false">${{ github.event.inputs.appName }}</string>|' i18n/src/commonMain/resources/MR/base/strings.xml
+            sed -i 's|<string name="app_name" translatable="false">.*</string>|<string name="app_name" translatable="false">${{ github.event.inputs.appName }}</string>|' i18n/src/commonMain/moko-resources/base/strings.xml
           fi
 
       - name: Change Application ID
