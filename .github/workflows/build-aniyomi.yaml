@@ -11,7 +11,7 @@ on:
       branch:
         description: "Branch name"
         required: false
-        default: "master"
+        default: "main"
       imageLink:
         description: "(release only) The link of the image to use as the app icon"
         required: false
